@@ -9,7 +9,10 @@
     <title>{{title}}</title>
 
     <link href="stylesheets/libraries/bootstrap.min.css" rel="stylesheet">
-    <link href="stylesheets/cover.css" rel="stylesheet">
+    {{#if customStylesheet}}
+       <link href="stylesheets/{{customStylesheet}}" rel="stylesheet">
+    {{/if}}
+   
 
 </head>
 

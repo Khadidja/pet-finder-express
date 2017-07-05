@@ -3,7 +3,7 @@ var express = require('express'),
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Pet Adoption' });
+    res.render('index', { title: 'Pet Adoption', customStylesheet: "cover.css" });
 });
 
 module.exports = router;

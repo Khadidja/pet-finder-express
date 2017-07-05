@@ -3,7 +3,8 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
-    index = require('./routes/index');
+    index = require('./routes/index'),
+    pets = require("./routes/pets");
 
 var app = express();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/pets', pets);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
