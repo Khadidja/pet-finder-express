@@ -3,7 +3,6 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
-
     index = require('./routes/index');
 
 var app = express();
@@ -13,7 +12,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
