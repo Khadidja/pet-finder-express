@@ -22,6 +22,29 @@
         <div class="col-md-6">
             <h4>About {{pet.name}}</h4>
             <p>{{pet.description}}</p>
+            <h4>Report Card:</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td>Breed(s)</td>
+                            <td>
+                                {{#each pet.breeds as |breed|}}
+                                    <p>{{breed}}</p>
+                                {{/each}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Option(s)</td>
+                            <td>
+                                {{#each pet.options as |option|}}
+                                    <p>{{option}}</p>
+                                {{/each}}
+                            </td>
+                    </tbody>
+                </table>
+            </div>
+            <p>Last update was on {{pet.lastUpdate}}</p>
         </div>
     </div>
 </div>

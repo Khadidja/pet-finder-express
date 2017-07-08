@@ -1,6 +1,7 @@
 var express = require('express'),
     router = express.Router({ mergeParams: true }),
-    request = require("request");
+    request = require("request"),
+    moment = require("moment");
 
 /* GET pets index page. */
 router.get('/', function(req, res, next) {
@@ -41,12 +42,35 @@ router.get("/:id", function(req, res, next) {
                 size: petSize(petfinderObj.pet.size.$t),
                 profilePicture: petfinderObj.pet.media.photos.photo.find(isImageSizeX).$t,
                 photos: petfinderObj.pet.media.photos.photo.filter(isImageSizeX),
-                description: petfinderObj.pet.description.$t
+                description: petfinderObj.pet.description.$t,
+                lastUpdate: moment(petfinderObj.pet.lastUpdate.$t).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                breeds: parseBreeds(petfinderObj.pet.breeds.breed),
+                options: parseOptions(petfinderObj.pet.options.option),
             };
             res.render('./pets/show', { title: 'Pet Adoption', pet: pet, customStylesheet: "pets.css" });
         }
     });
 });
+
+function parseBreeds(breedObj) {
+    var breeds = [];
+    if (Object.prototype.toString.call(breedObj) == "[object Array]") {
+        breedObj.forEach(function(breed) { breeds.push(breed.$t); });
+    } else {
+        breeds.push(breedObj.$t);
+    }
+    return breeds;
+}
+
+function parseOptions(optionObj) {
+    var options = [];
+    if (Object.prototype.toString.call(optionObj) == "[object Array]") {
+        optionObj.forEach(function(option) { options.push(option.$t); });
+    } else {
+        options.push(optionObj.$t);
+    }
+    return options;
+}
 
 function parsePetsResponse(petfinderObj) {
     var petsCount = petfinderObj.lastOffset.$t;
