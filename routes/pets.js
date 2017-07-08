@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
     var location = req.body.location;
     var key = process.env.PET_FINDER_API_KEY;
-    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=20";
+    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=2";
 
     request(url, function(err, response, body) {
         if (err) {
@@ -40,9 +40,10 @@ router.get("/:id", function(req, res, next) {
                 age: petfinderObj.pet.age.$t,
                 size: petSize(petfinderObj.pet.size.$t),
                 profilePicture: petfinderObj.pet.media.photos.photo.find(isImageSizeX).$t,
+                photos: petfinderObj.pet.media.photos.photo.filter(isImageSizeX),
                 description: petfinderObj.pet.description.$t
             };
-            res.render('./pets/show', { title: 'Pet Adoption', pet: pet });
+            res.render('./pets/show', { title: 'Pet Adoption', pet: pet, customStylesheet: "pets.css" });
         }
     });
 });

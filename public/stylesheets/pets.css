@@ -2,3 +2,10 @@
     min-height: 500px;
     width: 100%;
 }
+
+.carouselPhoto {
+    width: auto;
+    height: 450px;
+    max-height: 450px;
+    margin: auto;
+}

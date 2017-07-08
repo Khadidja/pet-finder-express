@@ -8,9 +8,9 @@
 
     <title>{{title}}</title>
 
-    <link href="stylesheets/libraries/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/libraries/bootstrap.min.css" rel="stylesheet">
     {{#if customStylesheet}}
-       <link href="stylesheets/{{customStylesheet}}" rel="stylesheet">
+       <link href="/stylesheets/{{customStylesheet}}" rel="stylesheet">
     {{/if}}
    
 
@@ -18,5 +18,7 @@
 
   <body>
     {{{body}}}
+    <script src="/javascripts/libraries/jquery-3.2.1.min.js"></script>
+    <script src="/javascripts/libraries/bootstrap.min.js"></script>
   </body>
 </html>
