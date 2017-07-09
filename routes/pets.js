@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
     var location = req.body.location;
     var key = process.env.PET_FINDER_API_KEY;
-    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=2";
+    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=5";
 
     request(url, function(err, response, body) {
         if (err) {
@@ -46,11 +46,35 @@ router.get("/:id", function(req, res, next) {
                 lastUpdate: moment(petfinderObj.pet.lastUpdate.$t).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                 breeds: parseBreeds(petfinderObj.pet.breeds.breed),
                 options: parseOptions(petfinderObj.pet.options.option),
+                status: getStatus(petfinderObj.pet.status.$t),
+                mix: petfinderObj.pet.mix.$t,
+                contact: {
+                    phone: petfinderObj.pet.contact.phone.$t,
+                    email: petfinderObj.pet.contact.email.$t,
+                    city: petfinderObj.pet.contact.city.$t,
+                    state: petfinderObj.pet.contact.state.$t,
+                    zip: petfinderObj.pet.contact.zip.$t
+                }
             };
             res.render('./pets/show', { title: 'Pet Adoption', pet: pet, customStylesheet: "pets.css" });
         }
     });
 });
+
+function getStatus(status) {
+    switch (status) {
+        case "A":
+            return "Adoptable";
+        case "H":
+            return "Hold";
+        case "P":
+            return "Pending";
+        case "X":
+            return "Adopted/Removed";
+        default:
+            return status;
+    }
+}
 
 function parseBreeds(breedObj) {
     var breeds = [];

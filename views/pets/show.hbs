@@ -20,30 +20,47 @@
             </div>
         </div>
         <div class="col-md-6">
+            <p class="pull-right text-uppercase"><strong><u>{{pet.status}}</u></strong></p>
             <h4>About {{pet.name}}</h4>
             <p>{{pet.description}}</p>
-            <h4>Report Card:</h4>
+            <h4>Report Card</h4>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <tbody>
                         <tr>
                             <td>Breed(s)</td>
                             <td>
-                                {{#each pet.breeds as |breed|}}
-                                    <p>{{breed}}</p>
-                                {{/each}}
+                                <ul class="list-inline pet-list-inline">
+                                    {{#each pet.breeds as |breed|}}
+                                    <li>{{breed}}</li>
+                                    {{/each}}
+                                </ul>
                             </td>
                         </tr>
+                        <tr><td>Sex</td><td>{{pet.sex}}</td></tr>
+                        <tr><td>Age</td><td>{{pet.age}}</td></tr>
+                        <tr><td>Size</td><td>{{pet.size}}</td></tr>
                         <tr>
                             <td>Option(s)</td>
                             <td>
-                                {{#each pet.options as |option|}}
-                                    <p>{{option}}</p>
-                                {{/each}}
+                                <ul class="list-inline pet-list-inline">
+                                    {{#each pet.options as |option|}}
+                                    <li>{{option}}</li>
+                                    {{/each}}
+                                </ul>
                             </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+            <h4>Contact</h4>
+            <address>
+                {{pet.contact.city}}, {{pet.contact.state}} {{pet.contact.zip}}<br>
+                {{#if pet.contact.phone}}
+                <abbr title="Phone">P:</abbr> {{pet.contact.phone}}<br>
+                {{/if}}
+                <a href="mailto:#">{{pet.contact.email}}</a>
+            </address>
             <p>Last update was on {{pet.lastUpdate}}</p>
         </div>
     </div>
