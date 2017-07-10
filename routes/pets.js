@@ -11,8 +11,10 @@ router.get('/', function(req, res, next) {
 /* POST pets index page. */
 router.post('/', function(req, res, next) {
     var location = req.body.location;
+    var type = req.body.type;
     var key = process.env.PET_FINDER_API_KEY;
-    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=5";
+    var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=10";
+    if (type !== "any") { url += "&animal=" + type; }
 
     request(url, function(err, response, body) {
         if (err) {
