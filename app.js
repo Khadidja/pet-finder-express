@@ -4,7 +4,8 @@ var express = require('express'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
     index = require('./routes/index'),
-    pets = require("./routes/pets");
+    pets = require("./routes/pets"),
+    shelters = require("./routes/shelters");
 
 var app = express();
 
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/pets', pets);
+app.use("/shelters", shelters);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
