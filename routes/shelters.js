@@ -11,7 +11,7 @@ router.get("/", function(req, res, next) {
 router.post('/', function(req, res, next) {
     var location = req.body.location;
     var key = process.env.PET_FINDER_API_KEY;
-    var url = "http://api.petfinder.com/shelter.find?key=" + key + "&location=" + location + "&format=json&count=10";
+    var url = "http://api.petfinder.com/shelter.find?key=" + key + "&location=" + location + "&format=json";
 
     request(url, function(err, response, body) {
         if (err) {
@@ -38,7 +38,32 @@ router.post('/', function(req, res, next) {
 
 /* GET shelter details */
 router.get("/:shelterId", function(req, res, next) {
-    res.send("Viewing details on shelter " + req.params.shelterId);
+    var key = process.env.PET_FINDER_API_KEY;
+    var url = "http://api.petfinder.com/shelter.get?key=" + key + "&id=" + req.params.shelterId + "&format=json";
+    request(url, function(err, response, body) {
+        if (err) {
+            res.send(err);
+        } else {
+            var shelterObj = JSON.parse(body).petfinder.shelter;
+            var mapKey = process.env.GOOGLE_EMBED_MAPS_API_KEY;
+            var lon = shelterObj.longitude.$t;
+            var lat = shelterObj.latitude.$t;
+            var name = shelterObj.name.$t;
+            var mapUrl = "https://www.google.com/maps/embed/v1/place?key=" + mapKey + "&q=" + name;
+            var shelter = {
+                id: shelterObj.id.$t,
+                name: shelterObj.name.$t,
+                city: shelterObj.city.$t,
+                state: shelterObj.state.$t,
+                zip: shelterObj.zip.$t,
+                country: shelterObj.country.$t,
+                phone: shelterObj.phone.$t,
+                email: shelterObj.email.$t,
+                mapUrl: mapUrl
+            };
+            res.render('./shelters/show', { title: 'Shelter', shelter: shelter });
+        }
+    });
 });
 
 module.exports = router;
