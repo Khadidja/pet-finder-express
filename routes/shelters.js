@@ -66,4 +66,17 @@ router.get("/:shelterId", function(req, res, next) {
     });
 });
 
+router.get("/:shelterId/pets", function(req, res, next) {
+    var key = process.env.PET_FINDER_API_KEY;
+    var url = "http://api.petfinder.com/shelter.getPets?key=" + key + "&id=" + req.params.shelterId + "&format=json";
+    request(url, function(err, response, body) {
+        if (err) {
+            res.send(err);
+        } else {
+            var pets = JSON.parse(body).petfinder.pets.pet;
+            res.render("./shelters/pets", { title: "Shelter Pets", shelter: req.params.shelterId, pets: pets });
+        }
+    });
+});
+
 module.exports = router;

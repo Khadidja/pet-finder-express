@@ -11,9 +11,12 @@
             </div>
         </div>
         <div class="col-md-4">
+            <address>
             {{shelter.city}}, {{shelter.state}} {{shelter.zip}}<br> {{#if shelter.phone}}
             <abbr title="Phone">P:</abbr> {{shelter.phone}} {{/if}} {{#if shelter.email}}
             <a href="mailto:{{shelter.email}}">{{shelter.email}}</a> {{/if}}
+            </address>
+            <a class="btn btn-primary" href="/shelters/{{shelter.id}}/pets">View adoptable pets</a>
         </div>
     </div>
 </div>
