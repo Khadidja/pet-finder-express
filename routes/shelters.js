@@ -49,7 +49,7 @@ router.get("/:shelterId", function(req, res, next) {
             var lon = shelterObj.longitude.$t;
             var lat = shelterObj.latitude.$t;
             var name = shelterObj.name.$t;
-            var mapUrl = "https://www.google.com/maps/embed/v1/place?key=" + mapKey + "&q=" + name;
+            var mapUrl = "https://www.google.com/maps/embed/v1/place?key=" + mapKey + "&q=" + lat + "," + lon;
             var shelter = {
                 id: shelterObj.id.$t,
                 name: shelterObj.name.$t,

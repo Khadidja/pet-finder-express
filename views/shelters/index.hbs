@@ -10,13 +10,15 @@
         </form>
     </div>
     <div>
+        <ul class="list-group">
         {{#each shelters as |s|}}
-        <li>
+        <li class="list-group-item">
+            <a class="btn btn-xs pull-right" href="/shelters/{{s.id}}">Learn more</a>
             <address>
-                <a href="/shelters/{{s.id}}"><strong>{{s.name}}</strong></a><br>
+                <strong>{{s.name}}</strong><br>
                 {{s.city}}, {{s.state}} {{s.zip}}<br>
                 {{#if s.phone}}
-                <abbr title="Phone">P:</abbr> {{s.phone}}
+                <abbr title="Phone">P:</abbr> {{s.phone}}<br>
                 {{/if}}
                 {{#if s.email}}
                 <a href="mailto:{{s.email}}">{{s.email}}</a>
@@ -24,5 +26,6 @@
             </address>
         </li>
         {{/each}}
+        </ul>
     </div>
 </div>
