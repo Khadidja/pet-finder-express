@@ -73,10 +73,37 @@ router.get("/:shelterId/pets", function(req, res, next) {
         if (err) {
             res.send(err);
         } else {
-            var pets = JSON.parse(body).petfinder.pets.pet;
+            var pets = [];
+            JSON.parse(body).petfinder.pets.pet.forEach(function(pet) {
+                pets.push({
+                    id: pet.id.$t,
+                    animal: pet.animal.$t,
+                    name: pet.name.$t,
+                    sex: (pet.sex.$t == "M") ? "Male" : "Female",
+                    age: pet.age.$t,
+                    size: petSize(pet.size.$t),
+                    profilePicture: pet.media.photos.photo.find(isImageSizePnt).$t
+                });
+            });
             res.render("./shelters/pets", { title: "Shelter Pets", shelter: req.params.shelterId, pets: pets });
         }
     });
 });
+
+function isImageSizePnt(element) {
+    return element["@size"] == "pnt";
+}
+
+function petSize(size) {
+    if (size == "L")
+        return "Large";
+    else if (size == "M")
+        return "Medium";
+    else if (size == "S")
+        return "Small";
+    else
+        return size;
+}
+
 
 module.exports = router;
