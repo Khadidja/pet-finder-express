@@ -2,6 +2,7 @@ var express = require('express'),
     router = express.Router({ mergeParams: true }),
     request = require("request"),
     moment = require("moment");
+    require('dotenv').config();
 
 /* GET pets index page. */
 router.get('/', function(req, res, next) {

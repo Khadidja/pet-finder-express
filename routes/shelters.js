@@ -1,25 +1,25 @@
 var express = require('express'),
     router = express.Router({ mergeParams: true }),
     request = require("request");
-
+require('dotenv').config();
 /* GET shelter search form */
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
     res.render('./shelters/index', { title: 'Pet Shelters' });
 });
 
 /* POST shelters index page. */
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
     var location = req.body.location;
     var key = process.env.PET_FINDER_API_KEY;
     var url = "http://api.petfinder.com/shelter.find?key=" + key + "&location=" + location + "&format=json";
 
-    request(url, function(err, response, body) {
+    request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
             var sheltersObj = JSON.parse(body).petfinder.shelters.shelter;
             var shelters = [];
-            sheltersObj.forEach(function(shelter) {
+            sheltersObj.forEach(function (shelter) {
                 shelters.push({
                     id: shelter.id.$t,
                     name: shelter.name.$t,
@@ -37,10 +37,10 @@ router.post('/', function(req, res, next) {
 });
 
 /* GET shelter details */
-router.get("/:shelterId", function(req, res, next) {
+router.get("/:shelterId", function (req, res, next) {
     var key = process.env.PET_FINDER_API_KEY;
     var url = "http://api.petfinder.com/shelter.get?key=" + key + "&id=" + req.params.shelterId + "&format=json";
-    request(url, function(err, response, body) {
+    request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
@@ -66,15 +66,20 @@ router.get("/:shelterId", function(req, res, next) {
     });
 });
 
-router.get("/:shelterId/pets", function(req, res, next) {
+router.get("/:shelterId/pets", function (req, res, next) {
     var key = process.env.PET_FINDER_API_KEY;
     var url = "http://api.petfinder.com/shelter.getPets?key=" + key + "&id=" + req.params.shelterId + "&format=json";
-    request(url, function(err, response, body) {
+    request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
             var pets = [];
-            JSON.parse(body).petfinder.pets.pet.forEach(function(pet) {
+            JSON.parse(body).petfinder.pets.pet.forEach(function (pet) {
+                if (typeof pet.media.photos === 'undefined') {
+                    profilePicture = '/images/placeholder.jpg'
+                } else {
+                    profilePicture = pet.media.photos.photo.find(isImageSizePnt).$t
+                }
                 pets.push({
                     id: pet.id.$t,
                     animal: pet.animal.$t,
@@ -82,7 +87,7 @@ router.get("/:shelterId/pets", function(req, res, next) {
                     sex: (pet.sex.$t == "M") ? "Male" : "Female",
                     age: pet.age.$t,
                     size: petSize(pet.size.$t),
-                    profilePicture: pet.media.photos.photo.find(isImageSizePnt).$t
+                    profilePicture: profilePicture
                 });
             });
             res.render("./shelters/pets", { title: "Shelter Pets", shelter: req.params.shelterId, pets: pets });
