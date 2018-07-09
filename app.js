@@ -3,11 +3,13 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
+    session = require('express-session'),
+    flash = require('connect-flash'),
     index = require('./routes/index'),
     pets = require("./routes/pets"),
     shelters = require("./routes/shelters");
 
-    
+
 var app = express();
 
 // view engine setup
@@ -20,20 +22,27 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    cookie: { maxAge: 60000 },
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(flash());
 
 app.use('/', index);
 app.use('/pets', pets);
 app.use("/shelters", shelters);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

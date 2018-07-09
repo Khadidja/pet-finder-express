@@ -2,9 +2,10 @@ var express = require('express'),
     router = express.Router({ mergeParams: true }),
     request = require("request");
 require('dotenv').config();
+
 /* GET shelter search form */
 router.get("/", function (req, res, next) {
-    res.render('./shelters/index', { title: 'Pet Shelters' });
+    res.render('./shelters/index', { title: 'Pet Shelters', error: req.flash('error') });
 });
 
 /* POST shelters index page. */
@@ -17,21 +18,29 @@ router.post('/', function (req, res, next) {
         if (err) {
             res.send(err);
         } else {
-            var sheltersObj = JSON.parse(body).petfinder.shelters.shelter;
-            var shelters = [];
-            sheltersObj.forEach(function (shelter) {
-                shelters.push({
-                    id: shelter.id.$t,
-                    name: shelter.name.$t,
-                    city: shelter.city.$t,
-                    state: shelter.state.$t,
-                    zip: shelter.zip.$t,
-                    country: shelter.country.$t,
-                    phone: shelter.phone.$t,
-                    email: shelter.email.$t
+            var petfinderObj = JSON.parse(body).petfinder;
+            if (!petfinderObj.hasOwnProperty('shelters')) {
+                req.flash('error',
+                    'Invalid location input. Please enter a zip code or the city and state e.g. Austin, Texas');
+                res.redirect('/shelters');
+            } else {
+
+                var sheltersObj = petfinderObj.shelters.shelter;
+                var shelters = [];
+                sheltersObj.forEach(function (shelter) {
+                    shelters.push({
+                        id: shelter.id.$t,
+                        name: shelter.name.$t,
+                        city: shelter.city.$t,
+                        state: shelter.state.$t,
+                        zip: shelter.zip.$t,
+                        country: shelter.country.$t,
+                        phone: shelter.phone.$t,
+                        email: shelter.email.$t
+                    });
                 });
-            });
-            res.render('./shelters/index', { title: 'Pet Adoption', shelters: shelters });
+                res.render('./shelters/index', { title: 'Pet Adoption', shelters: shelters });
+            }
         }
     });
 });
