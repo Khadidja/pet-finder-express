@@ -57,7 +57,6 @@ router.get("/:shelterId", function (req, res, next) {
             var mapKey = process.env.GOOGLE_EMBED_MAPS_API_KEY;
             var lon = shelterObj.longitude.$t;
             var lat = shelterObj.latitude.$t;
-            var name = shelterObj.name.$t;
             var mapUrl = "https://www.google.com/maps/embed/v1/place?key=" + mapKey + "&q=" + lat + "," + lon;
             var shelter = {
                 id: shelterObj.id.$t,
@@ -77,32 +76,44 @@ router.get("/:shelterId", function (req, res, next) {
 
 router.get("/:shelterId/pets", function (req, res, next) {
     var key = process.env.PET_FINDER_API_KEY;
-    var url = "http://api.petfinder.com/shelter.getPets?key=" + key + "&id=" + req.params.shelterId + "&format=json";
+    var url = "http://api.petfinder.com/shelter.get?key=" + key + "&id=" + req.params.shelterId + "&format=json";
     request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
-            var pets = [];
-            JSON.parse(body).petfinder.pets.pet.forEach(function (pet) {
-                if (typeof pet.media.photos === 'undefined') {
-                    profilePicture = '/images/placeholder.jpg'
-                } else {
-                    profilePicture = pet.media.photos.photo.find(isImageSizePnt).$t
-                }
-                pets.push({
-                    id: pet.id.$t,
-                    animal: pet.animal.$t,
-                    name: pet.name.$t,
-                    sex: (pet.sex.$t == "M") ? "Male" : "Female",
-                    age: pet.age.$t,
-                    size: petSize(pet.size.$t),
-                    profilePicture: profilePicture
-                });
-            });
-            res.render("./shelters/pets", { title: "Shelter Pets", shelter: req.params.shelterId, pets: pets });
+            res.locals.shelterName = JSON.parse(body).petfinder.shelter.name.$t;
         }
     });
-});
+    next();
+},
+    function (req, res, next) {
+        var key = process.env.PET_FINDER_API_KEY;
+        var url = "http://api.petfinder.com/shelter.getPets?key=" + key + "&id=" + req.params.shelterId + "&format=json";
+        request(url, function (err, response, body) {
+            if (err) {
+                res.send(err);
+            } else {
+                var pets = [];
+                JSON.parse(body).petfinder.pets.pet.forEach(function (pet) {
+                    if (typeof pet.media.photos === 'undefined') {
+                        profilePicture = '/images/placeholder.jpg'
+                    } else {
+                        profilePicture = pet.media.photos.photo.find(isImageSizePnt).$t
+                    }
+                    pets.push({
+                        id: pet.id.$t,
+                        animal: pet.animal.$t,
+                        name: pet.name.$t,
+                        sex: (pet.sex.$t == "M") ? "Male" : "Female",
+                        age: pet.age.$t,
+                        size: petSize(pet.size.$t),
+                        profilePicture: profilePicture
+                    });
+                });
+                res.render("./shelters/pets", { title: "Shelter Pets", shelter: res.locals.shelterName, pets: pets });
+            }
+        });
+    });
 
 function isImageSizePnt(element) {
     return element["@size"] == "pnt";
