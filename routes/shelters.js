@@ -24,7 +24,6 @@ router.post('/', function (req, res, next) {
                     'Invalid location input. Please enter a zip code or the city and state e.g. Austin, Texas');
                 res.redirect('/shelters');
             } else {
-
                 var sheltersObj = petfinderObj.shelters.shelter;
                 var shelters = [];
                 sheltersObj.forEach(function (shelter) {

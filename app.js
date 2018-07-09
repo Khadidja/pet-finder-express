@@ -5,12 +5,15 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash'),
+    helmet = require('helmet'),
+    compression = require('compression'),
     index = require('./routes/index'),
     pets = require("./routes/pets"),
     shelters = require("./routes/shelters");
 
 
 var app = express();
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +32,7 @@ app.use(session({
     saveUninitialized: false
 }));
 app.use(flash());
+app.use(compression());
 
 app.use('/', index);
 app.use('/pets', pets);

@@ -2,36 +2,44 @@ var express = require('express'),
     router = express.Router({ mergeParams: true }),
     request = require("request"),
     moment = require("moment");
-    require('dotenv').config();
+require('dotenv').config();
 
 /* GET pets index page. */
-router.get('/', function(req, res, next) {
-    res.render('./pets/index', { title: 'Pet Adoption' });
+router.get('/', function (req, res, next) {
+    res.render('./pets/index', { title: 'Pet Adoption', error: req.flash('error') });
 });
 
 /* POST pets index page. */
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
     var location = req.body.location;
     var type = req.body.type;
     var key = process.env.PET_FINDER_API_KEY;
     var url = "http://api.petfinder.com/pet.find?key=" + key + "&location=" + location + "&format=json&count=10";
     if (type !== "any") { url += "&animal=" + type; }
 
-    request(url, function(err, response, body) {
+    request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
-            var pets = parsePetsResponse(JSON.parse(body).petfinder);
-            res.render('./pets/index', { title: 'Pet Adoption', pets: pets, customStylesheet: "pets.css" });
+            var petfinderObj = JSON.parse(body).petfinder;
+            if (!petfinderObj.hasOwnProperty('pets')) {
+                req.flash('error',
+                    'Invalid location input. Please enter a zip code or the city and state e.g. Austin, Texas');
+                res.redirect('/pets');
+            } else {
+
+                var pets = parsePetsResponse(JSON.parse(body).petfinder);
+                res.render('./pets/index', { title: 'Pet Adoption', pets: pets, customStylesheet: "pets.css" });
+            }
         }
     });
 });
 
-router.get("/:id", function(req, res, next) {
+router.get("/:id", function (req, res, next) {
     var key = process.env.PET_FINDER_API_KEY;
     var url = "http://api.petfinder.com/pet.get?key=" + key + "&id=" + req.params.id + "&format=json";
 
-    request(url, function(err, response, body) {
+    request(url, function (err, response, body) {
         if (err) {
             res.send(err);
         } else {
@@ -82,7 +90,7 @@ function getStatus(status) {
 function parseBreeds(breedObj) {
     var breeds = [];
     if (Object.prototype.toString.call(breedObj) == "[object Array]") {
-        breedObj.forEach(function(breed) { breeds.push(breed.$t); });
+        breedObj.forEach(function (breed) { breeds.push(breed.$t); });
     } else {
         breeds.push(breedObj.$t);
     }
@@ -92,7 +100,7 @@ function parseBreeds(breedObj) {
 function parseOptions(optionObj) {
     var options = [];
     if (Object.prototype.toString.call(optionObj) == "[object Array]") {
-        optionObj.forEach(function(option) { options.push(option.$t); });
+        optionObj.forEach(function (option) { options.push(option.$t); });
     } else {
         options.push(optionObj.$t);
     }
@@ -113,7 +121,7 @@ function parsePetsResponse(petfinderObj) {
             profilePicture: petfinderObj.pets.pet.media.photos.photo.find(isImageSizeX).$t
         });
     } else {
-        petfinderObj.pets.pet.forEach(function(pet) {
+        petfinderObj.pets.pet.forEach(function (pet) {
             pets.push({
                 id: pet.id.$t,
                 animal: pet.animal.$t,
